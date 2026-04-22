@@ -214,7 +214,6 @@ export const Accounts = () => {
               <table className="table-premium">
                 <thead>
                   <tr>
-                  <tr>
                     <th>{t('accounts.code')}</th>
                     <th>{t('accounts.name')}</th>
                     <th>{t('accounts.type')}</th>

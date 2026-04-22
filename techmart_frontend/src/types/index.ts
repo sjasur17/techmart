@@ -27,6 +27,8 @@ export interface Account {
   name: string;
   account_type: 'A' | 'L' | 'E' | 'R' | 'X';
   account_type_display: string;
+  currency: 'UZS' | 'RUB' | 'USD';
+  currency_display?: string;
   balance: string; // decimal string
   is_active: boolean;
   created_at: string;
@@ -52,6 +54,8 @@ export interface JournalEntry {
   date: string;
   description: string;
   reference: string;
+  currency?: 'UZS' | 'RUB' | 'USD';
+  currency_display?: string;
   created_by_name: string;
   is_posted: boolean;
   posted_at?: string;

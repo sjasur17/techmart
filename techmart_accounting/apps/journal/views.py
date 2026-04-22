@@ -19,6 +19,7 @@ from django_filters import rest_framework as drf_filters
 
 from .models import JournalEntry, EntryLine
 from .serializers import JournalEntrySerializer, JournalEntryListSerializer
+from apps.notifications.models import Notification
 
 
 class JournalEntryFilter(drf_filters.FilterSet):
@@ -62,6 +63,14 @@ class JournalEntryViewSet(viewsets.ModelViewSet):
     search_fields = ['reference', 'description']
     ordering_fields = ['date', 'created_at', 'is_posted']
 
+    @staticmethod
+    def _create_notification(user, title: str, message: str) -> None:
+        """Best-effort notification creation that never breaks journal workflows."""
+        try:
+            Notification.objects.create(user=user, title=title, message=message)
+        except Exception:
+            pass
+
     def get_serializer_class(self):
         """Use lightweight list serializer for list actions, full serializer otherwise."""
         if self.action == 'list':
@@ -83,7 +92,12 @@ class JournalEntryViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer: JournalEntrySerializer) -> None:
         """Attach the requesting user as the entry creator."""
-        serializer.save(created_by=self.request.user)
+        entry = serializer.save(created_by=self.request.user)
+        self._create_notification(
+            self.request.user,
+            'Journal entry created',
+            f'Entry #{entry.id} ({entry.reference or "no reference"}) was saved as draft.',
+        )
 
     def update(self, request: Request, *args, **kwargs) -> Response:
         """
@@ -179,6 +193,12 @@ class JournalEntryViewSet(viewsets.ModelViewSet):
             entry.posted_at = timezone.now()
             entry.save(update_fields=['is_posted', 'posted_at', 'updated_at'])
 
+        self._create_notification(
+            request.user,
+            'Journal entry posted',
+            f'Entry #{entry.id} ({entry.reference or "no reference"}) has been posted successfully.',
+        )
+
         serializer = JournalEntrySerializer(entry, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -219,6 +239,12 @@ class JournalEntryViewSet(viewsets.ModelViewSet):
             entry.is_posted = False
             entry.posted_at = None
             entry.save(update_fields=['is_posted', 'posted_at', 'updated_at'])
+
+        self._create_notification(
+            request.user,
+            'Journal entry unposted',
+            f'Entry #{entry.id} ({entry.reference or "no reference"}) has been moved back to draft.',
+        )
 
         serializer = JournalEntrySerializer(entry, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)

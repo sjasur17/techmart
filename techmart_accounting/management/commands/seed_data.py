@@ -14,6 +14,7 @@ django.setup()
 
 from apps.accounts.models import Account
 from apps.journal.models import EntryLine, JournalEntry
+from apps.notifications.models import Notification
 
 User = get_user_model()
 
@@ -299,6 +300,7 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             if not keep_existing:
+                Notification.objects.all().delete()
                 EntryLine.objects.all().delete()
                 JournalEntry.objects.all().delete()
                 Account.objects.all().delete()
@@ -361,6 +363,12 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS(f'Posted {posted_count} journal entries.'))
             self.stdout.write(self.style.SUCCESS(f'Created {draft_count} draft journal entries.'))
+
+            Notification.objects.get_or_create(
+                user=user,
+                title='Welcome to TechMart dashboard',
+                message='Demo data is ready. Review draft transactions and post them when needed.',
+            )
 
         self._print_summary()
         self.stdout.write(self.style.SUCCESS('Demo seed completed successfully.'))
