@@ -36,9 +36,13 @@ X_FRAME_OPTIONS = 'DENY'
 # Database — Cloud SQL via DATABASE_URL
 # ---------------------------------------------------------------------------
 
+database_url = config('DATABASE_URL', default='').strip()
+if database_url in {'', '://'}:
+    database_url = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+
 DATABASES = {
     'default': dj_database_url.parse(
-        config('DATABASE_URL'),
+        database_url,
         conn_max_age=600,
         conn_health_checks=True,
     )
