@@ -62,9 +62,7 @@ export const Profile = () => {
         payload.append('avatar', avatarFile);
       }
 
-      const res = await apiClient.patch('/auth/me/', payload, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const res = await apiClient.patch('/auth/me/', payload);
       setAuth({
         access: localStorage.getItem('access_token') || '',
         refresh: localStorage.getItem('refresh_token') || '',
