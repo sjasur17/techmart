@@ -18,11 +18,12 @@ export const Layout = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  // Fetch notifications
+  // Fetch notifications only when authenticated
   const { data: notifications = [] } = useQuery({
     queryKey: ['notifications'],
     queryFn: notificationService.getNotifications,
     refetchInterval: 30000, // Poll every 30s
+    enabled: !!accessToken, // Only fetch if user is authenticated
   });
 
   const markAllReadMutation = useMutation({
