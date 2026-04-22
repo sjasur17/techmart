@@ -19,6 +19,10 @@ export const HelpCenter = () => {
   const { t } = useTranslation();
   const [chatInput, setChatInput] = React.useState('');
   const [chatMessages, setChatMessages] = React.useState<Array<{ role: 'user' | 'assistant'; text: string }>>([]);
+  const [chatOpen, setChatOpen] = React.useState(false);
+  const [docsOpen, setDocsOpen] = React.useState(false);
+  const chatAreaRef = React.useRef<HTMLDivElement | null>(null);
+  const docsAreaRef = React.useRef<HTMLDivElement | null>(null);
 
   const helpMutation = useMutation({
     mutationFn: (message: string) => reportsService.askHelpAssistant(message),
@@ -36,9 +40,20 @@ export const HelpCenter = () => {
   const handleSend = () => {
     const message = chatInput.trim();
     if (!message || helpMutation.isPending) return;
+    setChatOpen(true);
     setChatMessages((prev) => [...prev, { role: 'user', text: message }]);
     setChatInput('');
     helpMutation.mutate(message);
+  };
+
+  const handleStartConversation = () => {
+    setChatOpen(true);
+    chatAreaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleViewDocs = () => {
+    setDocsOpen(true);
+    docsAreaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const faqs = [
@@ -63,7 +78,7 @@ export const HelpCenter = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-page-enter">
       {/* Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-white border border-gray-200 p-8 sm:p-12 shadow-sm">
+      <div className="relative overflow-hidden rounded-3xl bg-white border border-gray-200 p-5 sm:p-8 lg:p-12 shadow-sm">
         <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none">
           <Headphones className="w-64 h-64 text-primary" />
         </div>
@@ -81,7 +96,7 @@ export const HelpCenter = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {/* Contact Options */}
         <div className="space-y-6">
           <Card className="hover:border-primary/30 transition-colors border-2 border-transparent">
@@ -92,45 +107,66 @@ export const HelpCenter = () => {
               <h3 className="text-lg font-bold mb-2">{t('help.live_chat', 'Live Chat')}</h3>
               <p className="text-sm text-gray-500 mb-4">{t('help.live_chat_desc', 'Describe your system issue and get an instant troubleshooting guide from AI support.')}</p>
 
-              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 h-36 overflow-y-auto mb-3 space-y-2">
-                {chatMessages.length === 0 && (
+              {!chatOpen ? (
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 h-36 overflow-y-auto mb-3 space-y-2">
                   <p className="text-xs text-gray-500">
                     {t('help.ai_hint', 'AI support handles system issues only: login, reports, export, settings, permissions, errors.')}
                   </p>
-                )}
+                </div>
+              ) : (
+                <div ref={chatAreaRef} className="rounded-xl border border-gray-200 bg-gray-50 p-3 h-56 overflow-y-auto mb-3 space-y-2">
+                  {chatMessages.length === 0 && (
+                    <p className="text-xs text-gray-500">
+                      {t('help.ai_hint', 'AI support handles system issues only: login, reports, export, settings, permissions, errors.')}
+                    </p>
+                  )}
 
-                {chatMessages.map((msg, idx) => (
-                  <div
-                    key={`${msg.role}-${idx}`}
-                    className={`text-xs px-2.5 py-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-100 text-blue-900' : 'bg-white border border-gray-200 text-gray-700'}`}
+                  {chatMessages.map((msg, idx) => (
+                    <div
+                      key={`${msg.role}-${idx}`}
+                      className={`text-xs px-2.5 py-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-100 text-blue-900' : 'bg-white border border-gray-200 text-gray-700'}`}
+                    >
+                      {msg.text}
+                    </div>
+                  ))}
+
+                  {helpMutation.isPending && (
+                    <div className="inline-flex items-center gap-1.5 text-xs text-gray-500 bg-white border border-gray-200 rounded-lg px-2.5 py-2">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      {t('help.ai_thinking', 'AI is analyzing your issue...')}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {chatOpen && (
+                <>
+                  <textarea
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    rows={2}
+                    placeholder={t('help.ai_placeholder', 'Write your system problem...')}
+                    className="input-base w-full text-sm mb-3 resize-none"
+                  />
+
+                  <button
+                    onClick={handleSend}
+                    disabled={!chatInput.trim() || helpMutation.isPending}
+                    className="text-blue-600 disabled:text-gray-400 disabled:cursor-not-allowed font-semibold text-sm inline-flex items-center gap-1 hover:gap-2 transition-all"
                   >
-                    {msg.text}
-                  </div>
-                ))}
+                    {t('help.start_convo', 'Start a conversation')} <ChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              )}
 
-                {helpMutation.isPending && (
-                  <div className="inline-flex items-center gap-1.5 text-xs text-gray-500 bg-white border border-gray-200 rounded-lg px-2.5 py-2">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    {t('help.ai_thinking', 'AI is analyzing your issue...')}
-                  </div>
-                )}
-              </div>
-
-              <textarea
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                rows={2}
-                placeholder={t('help.ai_placeholder', 'Write your system problem...')}
-                className="input-base w-full text-sm mb-3 resize-none"
-              />
-
-              <button
-                onClick={handleSend}
-                disabled={!chatInput.trim() || helpMutation.isPending}
-                className="text-blue-600 disabled:text-gray-400 disabled:cursor-not-allowed font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all"
-              >
-                {t('help.start_convo', 'Start a conversation')} <ChevronRight className="w-4 h-4" />
-              </button>
+              {!chatOpen && (
+                <button
+                  onClick={handleStartConversation}
+                  className="text-blue-600 font-semibold text-sm inline-flex items-center gap-1 hover:gap-2 transition-all"
+                >
+                  {t('help.start_convo', 'Start a conversation')} <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
             </CardBody>
           </Card>
 
@@ -186,8 +222,8 @@ export const HelpCenter = () => {
           </div>
 
           {/* Documentation Promo */}
-          <div className="mt-8 p-6 rounded-2xl border border-gray-200 bg-gray-50 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
+          <div className="mt-8 p-6 rounded-2xl border border-gray-200 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
               <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0">
                 <Book className="w-6 h-6 text-gray-700" />
               </div>
@@ -196,10 +232,65 @@ export const HelpCenter = () => {
                 <p className="text-sm text-gray-500">{t('help.docs_desc', 'Comprehensive guides and API references.')}</p>
               </div>
             </div>
-            <button className="btn-secondary whitespace-nowrap">
+            <button onClick={handleViewDocs} className="btn-secondary whitespace-nowrap w-full sm:w-auto justify-center">
               {t('help.view_docs', 'View Docs')}
             </button>
           </div>
+
+          {docsOpen && (
+            <div ref={docsAreaRef} className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm space-y-5 animate-page-enter">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">{t('help.docs_title', 'Read the Documentation')}</h3>
+                  <p className="text-sm text-gray-500">{t('help.docs_desc', 'Quick guides for the most common actions in TechMart.')}</p>
+                </div>
+                <button
+                  onClick={() => setDocsOpen(false)}
+                  className="text-sm font-semibold text-gray-500 hover:text-gray-900"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">Getting Started</p>
+                  <ul className="space-y-2 text-sm text-gray-700 list-disc pl-5">
+                    <li>Open the dashboard and verify the current balances.</li>
+                    <li>Check the Chart of Accounts before posting entries.</li>
+                    <li>Use Journal to create balanced debit/credit entries.</li>
+                  </ul>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">Reports</p>
+                  <ul className="space-y-2 text-sm text-gray-700 list-disc pl-5">
+                    <li>Trial Balance shows all active accounts with totals.</li>
+                    <li>Income Statement is filtered by date range.</li>
+                    <li>Balance Sheet compares assets, liabilities, and equity.</li>
+                  </ul>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">AI Support</p>
+                  <ul className="space-y-2 text-sm text-gray-700 list-disc pl-5">
+                    <li>Use Live Chat for login, reports, export, settings, and permission issues.</li>
+                    <li>Ask system questions in plain English.</li>
+                    <li>The assistant responds with short step-by-step fixes.</li>
+                  </ul>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                  <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">Shortcuts</p>
+                  <ul className="space-y-2 text-sm text-gray-700 list-disc pl-5">
+                    <li>Use the sidebar to jump between modules.</li>
+                    <li>Press Ctrl+K for quick search.</li>
+                    <li>Refresh the page after major updates.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

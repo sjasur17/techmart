@@ -7,6 +7,7 @@ export interface User {
   last_name: string;
   department: string;
   phone: string;
+  avatar_url?: string | null;
   is_accountant: boolean;
   is_staff: boolean;
   date_joined: string;

@@ -35,19 +35,32 @@ export const App = () => {
       <Toaster
         position="top-right"
         toastOptions={{
+          duration: 3200,
+          className: 'ios-smooth',
           style: {
-            background: 'var(--color-card-bg)',
+            background: 'rgba(255, 255, 255, 0.9)',
             color: 'var(--color-text-main)',
-            border: '1px solid var(--color-border)',
-            borderRadius: '12px',
+            border: '1px solid rgba(255,255,255,0.65)',
+            borderRadius: '18px',
             fontSize: '14px',
-            padding: '12px 16px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            fontWeight: 600,
+            padding: '14px 18px',
+            boxShadow: '0 18px 50px rgba(15, 23, 42, 0.14)',
+            backdropFilter: 'blur(18px)',
+            WebkitBackdropFilter: 'blur(18px)',
           },
           success: {
+            style: {
+              background: 'linear-gradient(135deg, rgba(240,253,244,0.96), rgba(255,255,255,0.92))',
+              border: '1px solid rgba(34,197,94,0.18)',
+            },
             iconTheme: { primary: '#22c55e', secondary: 'white' },
           },
           error: {
+            style: {
+              background: 'linear-gradient(135deg, rgba(254,242,242,0.96), rgba(255,255,255,0.92))',
+              border: '1px solid rgba(239,68,68,0.18)',
+            },
             iconTheme: { primary: '#ef4444', secondary: 'white' },
           },
         }}

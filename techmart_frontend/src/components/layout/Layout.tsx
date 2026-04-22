@@ -102,7 +102,7 @@ export const Layout = () => {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="shrink-0 h-14 flex items-center justify-between px-4 sm:px-8 border-b"
+        <header className="shrink-0 h-14 flex items-center justify-between px-3 sm:px-5 lg:px-8 border-b"
           style={{ background: 'var(--color-card-bg)', borderColor: 'var(--color-border)' }}>
           <div className="flex items-center gap-3">
             {/* Hamburger — mobile only */}
@@ -117,7 +117,7 @@ export const Layout = () => {
             {/* Search trigger */}
             <button
             onClick={() => setCmdOpen(true)}
-            className="flex items-center gap-3 px-4 py-2 rounded-xl border text-sm transition-all hover:border-primary/40 group"
+            className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-4 py-2 rounded-xl border text-sm transition-all hover:border-primary/40 group"
             style={{ background: 'var(--color-bg-page)', borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }}
           >
             <Search className="w-4 h-4 text-textMain/40 group-hover:text-primary transition-colors" />
@@ -138,7 +138,7 @@ export const Layout = () => {
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-4 relative">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 relative">
             {/* Refresh / Update */}
             <button
               onClick={handleReload}
@@ -180,7 +180,7 @@ export const Layout = () => {
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setNotificationsOpen(false)} />
                   <div
-                    className="absolute right-0 mt-3 w-80 rounded-2xl shadow-xl border z-50 overflow-hidden animate-scale-in"
+                    className="absolute right-0 mt-3 w-[calc(100vw-1rem)] sm:w-80 max-w-[22rem] rounded-2xl shadow-xl border z-50 overflow-hidden animate-scale-in"
                     style={{ background: 'var(--color-card-bg)', borderColor: 'var(--color-border)' }}
                   >
                     <div
@@ -260,7 +260,7 @@ export const Layout = () => {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <div className="max-w-6xl mx-auto">
             <PageWrapper key={location.pathname}>
               <Outlet />

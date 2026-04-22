@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { Card, CardBody } from '../components/ui/Card';
-import { User, Mail, Phone, Building, Shield, Edit3, Check, X, KeyRound } from 'lucide-react';
+import { User, Mail, Phone, Building, Shield, Edit3, Check, X, KeyRound, Upload, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiClient } from '../api/axios';
 
@@ -9,6 +9,9 @@ export const Profile = () => {
   const { user, setAuth } = useAuthStore();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarCleared, setAvatarCleared] = useState(false);
 
   const [formData, setFormData] = useState({
     full_name: user?.full_name || user?.username || '',
@@ -20,20 +23,56 @@ export const Profile = () => {
   const [pwData, setPwData] = useState({ current: '', newPw: '', confirm: '' });
   const [showPw, setShowPw] = useState(false);
 
+  useEffect(() => {
+    if (!avatarFile) return;
+    const previewUrl = URL.createObjectURL(avatarFile);
+    setAvatarPreview(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [avatarFile]);
+
+  useEffect(() => {
+    setFormData({
+      full_name: user?.full_name || user?.username || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      department: user?.department || '',
+    });
+  }, [user]);
+
+  const avatarSrc = useMemo(() => {
+    if (avatarPreview) return avatarPreview;
+    return user?.avatar_url || null;
+  }, [avatarPreview, user?.avatar_url]);
+
   const initials = (user?.full_name || user?.username || 'U')
     .split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2);
 
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res = await apiClient.patch('/auth/me/', {
-        first_name: formData.full_name.split(' ')[0],
-        last_name: formData.full_name.split(' ').slice(1).join(' '),
-        phone: formData.phone,
-        department: formData.department,
+      const payload = new FormData();
+      const [firstName, ...restName] = formData.full_name.trim().split(' ');
+      payload.append('first_name', firstName || '');
+      payload.append('last_name', restName.join(' '));
+      payload.append('phone', formData.phone);
+      payload.append('department', formData.department);
+      if (avatarCleared) {
+        payload.append('avatar', '');
+      } else if (avatarFile) {
+        payload.append('avatar', avatarFile);
+      }
+
+      const res = await apiClient.patch('/auth/me/', payload, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setAuth({
+        access: localStorage.getItem('access_token') || '',
+        refresh: localStorage.getItem('refresh_token') || '',
+        user: res.data,
       });
       toast.success('Profile updated!');
       setEditing(false);
+      setAvatarCleared(false);
     } catch (e: any) {
       toast.error(e.response?.data?.detail || 'Failed to update profile');
     } finally {
@@ -56,7 +95,7 @@ export const Profile = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -68,13 +107,43 @@ export const Profile = () => {
 
       {/* Avatar + name card */}
       <Card>
-        <CardBody className="p-6">
-          <div className="flex items-center gap-5">
-            <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-medium"
-              style={{ background: 'linear-gradient(135deg, var(--color-primary), #FF8C69)' }}
-            >
-              {initials}
+        <CardBody className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
+            <div className="relative">
+              {avatarSrc ? (
+                <img
+                  src={avatarSrc}
+                  alt={user?.full_name || user?.username || 'Profile photo'}
+                  className="w-20 h-20 rounded-2xl object-cover shadow-medium border"
+                  style={{ borderColor: 'var(--color-border)' }}
+                />
+              ) : (
+                <div
+                  className="w-20 h-20 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-medium"
+                  style={{ background: 'linear-gradient(135deg, var(--color-primary), #FF8C69)' }}
+                >
+                  {initials}
+                </div>
+              )}
+              {editing && (
+                <label
+                  className="absolute -right-2 -bottom-2 inline-flex items-center justify-center w-8 h-8 rounded-full border cursor-pointer shadow-sm bg-white text-primary hover:scale-105 transition-transform"
+                  style={{ borderColor: 'var(--color-border)' }}
+                  title={avatarSrc ? 'Change photo' : 'Upload photo'}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setAvatarFile(file);
+                      setAvatarCleared(false);
+                    }}
+                  />
+                  <Camera className="w-4 h-4" />
+                </label>
+              )}
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-bold">{user?.full_name || user?.username}</h2>
@@ -95,19 +164,48 @@ export const Profile = () => {
             </div>
             <button
               onClick={() => setEditing(!editing)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-all hover:border-primary/40 hover:text-primary"
+              className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-all hover:border-primary/40 hover:text-primary w-full sm:w-auto"
               style={{ borderColor: 'var(--color-border)' }}
             >
               <Edit3 className="w-4 h-4" />
               {editing ? 'Cancel' : 'Edit'}
             </button>
           </div>
+
+          {editing && (
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => document.querySelector<HTMLInputElement>('input[type="file"]')?.click()}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all hover:border-primary/40 hover:text-primary w-full sm:w-auto"
+                style={{ borderColor: 'var(--color-border)' }}
+              >
+                <Upload className="w-4 h-4" />
+                {avatarSrc ? 'Change photo' : 'Upload photo'}
+              </button>
+              {avatarSrc && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAvatarFile(null);
+                    setAvatarPreview(null);
+                    setAvatarCleared(true);
+                  }}
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-all hover:border-red-300 hover:text-red-500 w-full sm:w-auto"
+                  style={{ borderColor: 'var(--color-border)' }}
+                >
+                  <X className="w-4 h-4" />
+                  Remove photo
+                </button>
+              )}
+            </div>
+          )}
         </CardBody>
       </Card>
 
       {/* Info fields */}
       <Card>
-        <CardBody className="p-6 space-y-5">
+        <CardBody className="p-4 sm:p-6 space-y-5">
           <h3 className="font-semibold text-sm text-textMain/60 uppercase tracking-wide">Personal Information</h3>
 
           {[
@@ -116,7 +214,7 @@ export const Profile = () => {
             { label: 'Phone', key: 'phone', icon: Phone, type: 'tel', placeholder: '+998 90 123 45 67' },
             { label: 'Department', key: 'department', icon: Building, type: 'text', placeholder: 'e.g. Finance' },
           ].map(({ label, key, icon: Icon, type, placeholder, disabled }) => (
-            <div key={key} className="flex items-center gap-4">
+            <div key={key} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                 style={{ background: 'var(--color-primary-light)' }}>
                 <Icon className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
@@ -141,18 +239,18 @@ export const Profile = () => {
           ))}
 
           {editing && (
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="btn-primary gap-2"
+                className="btn-primary gap-2 justify-center"
               >
                 <Check className="w-4 h-4" />
                 {saving ? 'Saving...' : 'Save changes'}
               </button>
               <button
                 onClick={() => setEditing(false)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all hover:border-primary/40"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all hover:border-primary/40"
                 style={{ borderColor: 'var(--color-border)' }}
               >
                 <X className="w-4 h-4" />
@@ -165,8 +263,8 @@ export const Profile = () => {
 
       {/* Change password */}
       <Card>
-        <CardBody className="p-6">
-          <div className="flex items-center justify-between mb-4">
+        <CardBody className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center"
                 style={{ background: 'var(--color-primary-light)' }}>
@@ -179,7 +277,7 @@ export const Profile = () => {
             </div>
             <button
               onClick={() => setShowPw(!showPw)}
-              className="text-sm font-medium px-3 py-2 rounded-xl border transition-all hover:border-primary/40 hover:text-primary"
+              className="text-sm font-medium px-3 py-2 rounded-xl border transition-all hover:border-primary/40 hover:text-primary w-full sm:w-auto"
               style={{ borderColor: 'var(--color-border)' }}
             >
               {showPw ? 'Cancel' : 'Change password'}

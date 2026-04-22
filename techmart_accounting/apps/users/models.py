@@ -27,6 +27,7 @@ class User(AbstractUser):
         help_text='Department or business unit (e.g., Finance, Operations).',
     )
     phone = models.CharField(max_length=20, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

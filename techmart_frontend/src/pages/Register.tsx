@@ -184,24 +184,26 @@ export const Register = () => {
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 flex flex-col px-8 py-10 relative overflow-y-auto">
+      <div className="flex-1 flex flex-col px-4 sm:px-8 py-8 sm:py-10 relative overflow-y-auto">
         {/* Top-right: Language & Theme dropdowns */}
-        <div className="absolute top-6 right-8 flex items-center gap-2 z-10">
+        <div className="absolute top-4 sm:top-6 right-4 sm:right-8 flex items-center gap-1.5 z-10">
           <Dropdown
             options={LANGUAGES}
             value={language}
             onChange={handleLanguageChange}
             icon={Globe}
+            compact
           />
           <Dropdown
             options={THEMES.map(th => ({ code: th.code, label: th.label }))}
             value={theme}
             onChange={(code) => setTheme(code as 'light' | 'dark')}
             icon={ThemeIcon}
+            compact
           />
         </div>
         {/* Back to login */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 mt-8 sm:mt-0">
           <Link
             to="/login"
             className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary"

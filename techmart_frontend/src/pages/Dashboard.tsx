@@ -50,7 +50,7 @@ const PIE_COLORS = {
 const StatCard = ({ title, amount, icon: Icon, trend = 0, isPositive = true, sparkSeed = 50, color = 'orange' }: StatCardProps) => {
   const c = COLOR_MAP[color];
   return (
-    <div className="card-base p-5 hover-lift flex flex-col gap-3">
+    <div className="card-base ios-smooth p-5 hover-lift flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>{title}</span>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: c.bg }}>
@@ -140,25 +140,25 @@ export const Dashboard = () => {
   const today = new Date().toLocaleDateString(i18n.language === 'uz' ? 'uz-UZ' : i18n.language === 'ru' ? 'ru-RU' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-page-enter">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4">
         <div>
           <p className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-muted)' }}>{today}</p>
           <h1 className="text-2xl font-bold tracking-tight">{greeting} 👋</h1>
           <p className="text-sm mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{t('dashboard.subtitle')}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="hidden sm:flex rounded-xl border border-borderBase p-1">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="flex rounded-xl border border-borderBase p-1 w-full sm:w-auto">
             <button
               onClick={() => setPeriod('month')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${period === 'month' ? 'bg-primary text-white' : 'text-textMain/70 hover:bg-black/5 dark:hover:bg-white/5'}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex-1 sm:flex-initial ${period === 'month' ? 'bg-primary text-white' : 'text-textMain/70 hover:bg-black/5 dark:hover:bg-white/5'}`}
             >
               {t('dashboard.this_month', 'This Month')}
             </button>
             <button
               onClick={() => setPeriod('year')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${period === 'year' ? 'bg-primary text-white' : 'text-textMain/70 hover:bg-black/5 dark:hover:bg-white/5'}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex-1 sm:flex-initial ${period === 'year' ? 'bg-primary text-white' : 'text-textMain/70 hover:bg-black/5 dark:hover:bg-white/5'}`}
             >
               {t('dashboard.this_year', 'This Year')}
             </button>
@@ -174,7 +174,7 @@ export const Dashboard = () => {
       </div>
 
       {draft_entries_count > 0 && (
-        <div className="rounded-2xl border border-orange-300/60 bg-orange-50 dark:bg-orange-950/20 px-4 py-3 text-sm text-orange-800 dark:text-orange-200 flex items-start justify-between gap-4">
+        <div className="rounded-2xl border border-orange-300/60 bg-orange-50 dark:bg-orange-950/20 px-4 py-3 text-sm text-orange-800 dark:text-orange-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <p className="font-semibold">
               {t('dashboard.draft_warning_title', {
@@ -186,7 +186,7 @@ export const Dashboard = () => {
               {t('dashboard.draft_warning_desc', 'These are not included in financial totals.')}
             </p>
           </div>
-          <Link to="/journal?status=draft" className="text-xs font-semibold underline whitespace-nowrap self-center">
+          <Link to="/journal?status=draft" className="text-xs font-semibold underline whitespace-nowrap self-start sm:self-center">
             {t('dashboard.view_drafts', 'View drafts')}
           </Link>
         </div>
@@ -206,7 +206,7 @@ export const Dashboard = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 stagger-children">
         <StatCard 
           title={t('dashboard.total_revenue')} 
           amount={formatCurrency(total_revenue)} 
@@ -234,7 +234,7 @@ export const Dashboard = () => {
           <Card className="h-full">
             <CardHeader title={t('dashboard.vs')} />
             <CardBody>
-              <div className="h-72">
+              <div className="h-64 sm:h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={comparisonData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }} barCategoryGap="35%">
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
@@ -267,7 +267,7 @@ export const Dashboard = () => {
             </CardHeader>
             <CardBody>
               {hasStatusData ? (
-                <div className="h-72">
+                <div className="h-64 sm:h-72">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -305,7 +305,7 @@ export const Dashboard = () => {
               <TrendingUp className="w-4 h-4 text-textMain/50" />
             </CardHeader>
             <CardBody>
-              <div className="h-72">
+              <div className="h-64 sm:h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={trendData} margin={{ top: 8, right: 12, left: 8, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
@@ -337,7 +337,7 @@ export const Dashboard = () => {
             <CardBody>
               {hasStructureData ? (
                 <>
-                  <div className="h-52">
+                  <div className="h-52 sm:h-56">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -389,7 +389,7 @@ export const Dashboard = () => {
         <Card>
           <CardHeader title={t('dashboard.activity')} />
           <CardBody className="p-0">
-            <div className="px-6 py-4 flex items-center justify-between border-b border-borderBase bg-gray-50/50 dark:bg-gray-800/30">
+            <div className="px-4 sm:px-6 py-4 flex items-center justify-between border-b border-borderBase bg-gray-50/50 dark:bg-gray-800/30 gap-3">
               <div>
                 <h3 className="font-bold text-lg">{t('dashboard.activity')}</h3>
                 <p className="text-sm text-textMain/50">{t('dashboard.activity_latest', 'Latest transaction logs')}</p>
@@ -400,23 +400,23 @@ export const Dashboard = () => {
             </div>
             <ul className="divide-y divide-gray-100 dark:divide-gray-800">
               {recent_entries?.map((entry: any) => (
-                <li key={entry.id} className="p-6 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                <li key={entry.id} className="p-4 sm:p-6 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                   {(() => {
                     const status = entry.status || (entry.is_posted ? 'posted' : 'draft');
                     const badgeVariant = status === 'cancelled' ? 'error' : status === 'posted' ? 'success' : 'warning';
                     return (
                       <>
-                        <div className="flex justify-between mb-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1 gap-2">
                           <span className="font-medium text-sm pr-4 break-words">{entry.description}</span>
                           <Badge variant={badgeVariant}>
                             {status === 'cancelled' ? t('dashboard.cancelled', 'Cancelled') : status === 'posted' ? t('dashboard.posted') : t('dashboard.draft')}
                           </Badge>
                         </div>
-                        <div className="flex justify-between text-xs text-textMain/50">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-textMain/50 gap-1">
                           <span>{entry.reference || `REF #${entry.id}`}</span>
                           <span className="font-semibold text-textMain/80">{formatCurrency(entry.amount || '0')}</span>
                         </div>
-                        <div className="flex justify-between text-xs text-textMain/50 mt-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-textMain/50 mt-1 gap-1">
                           <span>{entry.created_by_name}</span>
                           <span>{formatDate(entry.date)}</span>
                         </div>

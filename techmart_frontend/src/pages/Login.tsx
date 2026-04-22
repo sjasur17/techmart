@@ -86,7 +86,7 @@ export const Login = () => {
     <div className="min-h-screen flex font-sans animate-page-enter" style={{ background: 'var(--color-bg-page)' }}>
       {/* Left decorative panel */}
       <div
-        className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
+        className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden ios-smooth"
         style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}
       >
         <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full opacity-20 blur-3xl"
@@ -143,20 +143,22 @@ export const Login = () => {
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex flex-col px-8 py-10 relative">
+      <div className="flex-1 flex flex-col px-4 sm:px-8 py-8 sm:py-10 relative ios-smooth">
         {/* Top-right: Language & Theme dropdowns */}
-        <div className="absolute top-6 right-8 flex items-center gap-2 z-10">
+        <div className="absolute top-4 sm:top-6 right-4 sm:right-8 flex items-center gap-1.5 z-10">
           <Dropdown
             options={LANGUAGES}
             value={language}
             onChange={handleLanguageChange}
             icon={Globe}
+            compact
           />
           <Dropdown
             options={THEMES.map(th => ({ code: th.code, label: th.label }))}
             value={theme}
             onChange={(code) => setTheme(code as 'light' | 'dark')}
             icon={ThemeIcon}
+            compact
           />
         </div>
         {/* Top: mobile logo */}
@@ -169,7 +171,7 @@ export const Login = () => {
 
         {/* Center: form */}
         <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-sm">
+          <div className="w-full max-w-sm ios-card ios-smooth p-6 sm:p-8">
             <div className="mb-8">
               <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text-main)' }}>
                 {t('auth.welcome', 'Welcome back')}

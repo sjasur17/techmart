@@ -49,7 +49,7 @@ const NewAccountModal = ({ onClose }: NewAccountModalProps) => {
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md card-base p-6 animate-scale-in">
+      <div className="relative w-full max-w-md card-base p-4 sm:p-6 animate-scale-in">
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="text-lg font-bold">{t('accounts.new_account', 'New Account')}</h2>
@@ -61,7 +61,7 @@ const NewAccountModal = ({ onClose }: NewAccountModalProps) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-semibold uppercase tracking-wide block mb-1.5" style={{ color: 'var(--color-text-muted)' }}>
                 {t('accounts.code', 'Account Code')} *
@@ -112,12 +112,12 @@ const NewAccountModal = ({ onClose }: NewAccountModalProps) => {
             />
           </div>
 
-          <div className="flex gap-3 pt-1">
+          <div className="flex flex-col sm:flex-row gap-3 pt-1">
             <button type="submit" disabled={saving} className="btn-primary flex-1 justify-center">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
               {saving ? t('common.creating', 'Creating...') : t('common.create_account', 'Create Account')}
             </button>
-            <button type="button" onClick={onClose} className="btn-secondary px-4">
+            <button type="button" onClick={onClose} className="btn-secondary px-4 justify-center">
               {t('common.cancel', 'Cancel')}
             </button>
           </div>
@@ -155,14 +155,14 @@ export const Accounts = () => {
     <div className="space-y-6">
       {showModal && <NewAccountModal onClose={() => setShowModal(false)} />}
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{t('accounts.title')}</h1>
           <p className="text-sm mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{t('accounts.subtitle')}</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="btn-primary"
+          className="btn-primary w-full sm:w-auto justify-center"
         >
           <Plus className="w-4 h-4" />
           {t('accounts.new_account')}
@@ -171,7 +171,7 @@ export const Accounts = () => {
 
       <Card>
         <CardHeader>
-          <div className="relative w-72">
+          <div className="relative w-full sm:w-72">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-muted)' }} />
             <input
               type="text"
@@ -191,9 +191,6 @@ export const Accounts = () => {
             <div className="p-12 text-center">
               <FileText className="w-10 h-10 mx-auto mb-3 opacity-20" />
               <p className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>{t('accounts.no_accounts')}</p>
-              <button onClick={() => setShowModal(true)} className="btn-primary mt-4 mx-auto">
-                <Plus className="w-4 h-4" /> {t('accounts.new_account', 'Add first account')}
-              </button>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -237,9 +234,9 @@ export const Accounts = () => {
 
           {/* Pagination */}
           {data && (data.next || data.previous) && (
-            <div className="px-5 py-4 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-border)' }}>
+            <div className="px-4 sm:px-5 py-4 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-3" style={{ borderColor: 'var(--color-border)' }}>
               <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('accounts.total')}: {data.count}</span>
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <button disabled={!data.previous} onClick={() => setPage(p => p - 1)} className="btn-secondary px-3 py-1.5 text-xs disabled:opacity-40">
                   {t('accounts.prev')}
                 </button>

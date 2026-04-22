@@ -11,7 +11,7 @@ interface PageWrapperProps {
  */
 export const PageWrapper: React.FC<PageWrapperProps> = ({ children, className = '' }) => {
   return (
-    <div className={`animate-page-enter ${className}`}>
+    <div className={`page-transition-shell animate-page-enter ${className}`}>
       {children}
     </div>
   );

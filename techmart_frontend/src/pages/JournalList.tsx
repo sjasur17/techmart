@@ -60,7 +60,7 @@ export const JournalList = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-8">
         <div>
           <h1 className="text-2xl font-bold">{t('journals.title')}</h1>
           <p className="text-textMain/60 text-sm mt-1">{t('journals.subtitle')}</p>
@@ -72,7 +72,7 @@ export const JournalList = () => {
         </div>
         <Link 
           to="/journal/new" 
-          className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-hover transition-colors"
+          className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-hover transition-colors w-full sm:w-auto text-center"
         >
           {t('journals.new_entry')}
         </Link>
@@ -89,28 +89,28 @@ export const JournalList = () => {
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 border-b border-borderBase dark:bg-gray-800/30 text-xs uppercase font-semibold text-textMain/60">
                   <tr>
-                    <th className="px-6 py-4">{t('journals.id_ref')}</th>
-                    <th className="px-6 py-4">{t('journals.date')}</th>
-                    <th className="px-6 py-4">{t('journals.description')}</th>
-                    <th className="px-6 py-4">{t('journals.created_by')}</th>
-                    <th className="px-6 py-4">{t('journals.status')}</th>
-                    <th className="px-6 py-4 text-right">{t('journals.actions')}</th>
+                    <th className="px-4 sm:px-6 py-4">{t('journals.id_ref')}</th>
+                    <th className="px-4 sm:px-6 py-4">{t('journals.date')}</th>
+                    <th className="px-4 sm:px-6 py-4">{t('journals.description')}</th>
+                    <th className="px-4 sm:px-6 py-4">{t('journals.created_by')}</th>
+                    <th className="px-4 sm:px-6 py-4">{t('journals.status')}</th>
+                    <th className="px-4 sm:px-6 py-4 text-right">{t('journals.actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {data?.results.map((entry) => (
                     <tr key={entry.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         <div className="font-medium text-primary">#{entry.id}</div>
                         <div className="text-xs text-textMain/50">{entry.reference}</div>
                       </td>
-                      <td className="px-6 py-4 font-medium">{formatDate(entry.date)}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 font-medium whitespace-nowrap">{formatDate(entry.date)}</td>
+                      <td className="px-4 sm:px-6 py-4">
                         <div className="font-medium">{entry.description}</div>
                         <div className="text-xs text-textMain/50">{entry.line_count} {t('journals.lines')}</div>
                       </td>
-                      <td className="px-6 py-4">{entry.created_by_name}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{entry.created_by_name}</td>
+                      <td className="px-4 sm:px-6 py-4">
                         <Badge variant={entry.is_posted ? 'success' : 'warning'}>
                           {entry.is_posted ? t('journals.posted') : t('journals.draft')}
                         </Badge>
@@ -120,7 +120,7 @@ export const JournalList = () => {
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-4 sm:px-6 py-4 text-right">
                         {!entry.is_posted ? (
                           <button 
                             onClick={() => {
@@ -157,20 +157,20 @@ export const JournalList = () => {
           )}
 
           {data && (data.next || data.previous) && (
-            <div className="px-6 py-4 border-t border-borderBase flex items-center justify-between">
+            <div className="px-4 sm:px-6 py-4 border-t border-borderBase flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <span className="text-sm text-textMain/60">{t('accounts.total')}: {data.count}</span>
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full sm:w-auto">
                 <button 
                   disabled={!data.previous} 
                   onClick={() => setPage(p => p - 1)}
-                  className="px-3 py-1 rounded border border-borderBase text-sm disabled:opacity-50 hover:bg-black/5 dark:hover:bg-white/5"
+                  className="px-3 py-1 rounded border border-borderBase text-sm disabled:opacity-50 hover:bg-black/5 dark:hover:bg-white/5 flex-1 sm:flex-initial"
                 >
                   {t('accounts.prev')}
                 </button>
                 <button 
                   disabled={!data.next} 
                   onClick={() => setPage(p => p + 1)}
-                  className="px-3 py-1 rounded border border-borderBase text-sm disabled:opacity-50 hover:bg-black/5 dark:hover:bg-white/5"
+                  className="px-3 py-1 rounded border border-borderBase text-sm disabled:opacity-50 hover:bg-black/5 dark:hover:bg-white/5 flex-1 sm:flex-initial"
                 >
                   {t('accounts.next')}
                 </button>

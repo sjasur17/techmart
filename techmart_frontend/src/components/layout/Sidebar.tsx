@@ -21,7 +21,7 @@ const NavItem = ({ to, icon: Icon, label, end }: NavItemProps) => (
     to={to}
     end={end}
     className={({ isActive }) =>
-      `nav-item group ${isActive ? 'active' : ''}`
+      `nav-item ios-smooth group ${isActive ? 'active' : ''}`
     }
   >
     {({ isActive }) => (
@@ -66,7 +66,7 @@ export const Sidebar = () => {
 
   return (
     <div
-      className="w-64 h-screen flex flex-col border-r relative overflow-hidden shrink-0"
+      className="w-64 h-screen flex flex-col border-r relative overflow-hidden shrink-0 ios-smooth"
       style={{ background: 'var(--color-sidebar)', borderColor: 'var(--color-border)' }}
     >
       {/* Top ambient glow */}
@@ -134,7 +134,7 @@ export const Sidebar = () => {
         {/* We can keep logout here or move to profile dropdown, keeping it simple for now */}
         <button
           onClick={handleLogout}
-          className="nav-item w-full hover:!bg-red-50 dark:hover:!bg-red-950/30 hover:!text-red-500 group"
+          className="nav-item ios-smooth w-full hover:!bg-red-50 dark:hover:!bg-red-950/30 hover:!text-red-500 group"
         >
           <span className="flex items-center justify-center w-8 h-8 rounded-xl text-textMain/40 group-hover:text-red-500 group-hover:bg-red-50 dark:group-hover:bg-red-950/30 transition-all">
             <LogOut className="w-4 h-4" />

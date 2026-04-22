@@ -8,8 +8,9 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'techmart_accounting.settings.local')
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, BASE_DIR)
 django.setup()
 
 from apps.accounts.models import Account
@@ -302,11 +303,6 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS(f'Seeded {len(accounts_by_code)} chart-of-account records.'))
 
-            if not keep_existing:
-                self.stdout.write('Creating journal entries and posting balanced transactions...')
-            else:
-                self.stdout.write('Adding journal entries to existing data...')
-
             posted_count = 0
             draft_count = 0
 
@@ -321,18 +317,18 @@ class Command(BaseCommand):
                     },
                 )
 
-                if created_entry:
-                    for code, debit, credit, memo in entry_data['lines']:
-                        EntryLine.objects.create(
-                            journal=entry,
-                            account=accounts_by_code[code],
-                            debit=parse_amount(debit),
-                            credit=parse_amount(credit),
-                            memo=memo,
-                        )
-                else:
+                if not created_entry:
                     self.stdout.write(f'Skipping existing entry {entry.reference}.')
                     continue
+
+                for code, debit, credit, memo in entry_data['lines']:
+                    EntryLine.objects.create(
+                        journal=entry,
+                        account=accounts_by_code[code],
+                        debit=parse_amount(debit),
+                        credit=parse_amount(credit),
+                        memo=memo,
+                    )
 
                 if entry_data['posted']:
                     self._post_entry(entry)

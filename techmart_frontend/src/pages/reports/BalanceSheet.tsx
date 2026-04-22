@@ -48,7 +48,7 @@ export const BalanceSheet = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-8">
         <div>
           <h1 className="text-2xl font-bold">{t('reports.balance_sheet')}</h1>
           <p className="text-textMain/60 text-sm mt-1">
@@ -56,11 +56,11 @@ export const BalanceSheet = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 no-print">
+        <div className="flex items-center gap-2 no-print w-full sm:w-auto">
           <PrintButton title={t('reports.print')} />
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-borderBase text-textMain px-4 py-2 rounded-lg font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-borderBase text-textMain px-4 py-2 rounded-lg font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex-1 sm:flex-initial"
           >
             <Download className="w-4 h-4" /> {t('reports.export_csv')}
           </button>
@@ -74,13 +74,13 @@ export const BalanceSheet = () => {
           <CardBody className="p-0">
             <div className="w-full text-left text-sm py-4">
                {data.assets.length === 0 && <span className="px-6 text-gray-400">-</span>}
-               {data.assets.map(acc => (
-                 <div key={acc.account_code} className="flex justify-between px-6 py-2">
+                 {data.assets.map(acc => (
+                   <div key={acc.account_code} className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-2 gap-1">
                    <span>[{acc.account_code}] {acc.account_name}</span>
                    <span>{formatCurrency(acc.balance)}</span>
                  </div>
                ))}
-               <div className="flex justify-between font-bold px-6 py-4 border-t border-borderBase mt-4 bg-gray-50 dark:bg-gray-800/30 text-green-700 dark:text-green-500">
+               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between font-bold px-4 sm:px-6 py-4 border-t border-borderBase mt-4 bg-gray-50 dark:bg-gray-800/30 text-green-700 dark:text-green-500 gap-1">
                   <span>{t('reports.total')} {t('reports.assets')}</span>
                   <span>{formatCurrency(data.total_assets)}</span>
                </div>
@@ -96,12 +96,12 @@ export const BalanceSheet = () => {
               <div className="w-full text-left text-sm py-4">
                  {data.liabilities.length === 0 && <span className="px-6 text-gray-400">-</span>}
                  {data.liabilities.map(acc => (
-                   <div key={acc.account_code} className="flex justify-between px-6 py-2">
+                   <div key={acc.account_code} className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-2 gap-1">
                      <span>[{acc.account_code}] {acc.account_name}</span>
                      <span>{formatCurrency(acc.balance)}</span>
                    </div>
                  ))}
-                 <div className="flex justify-between font-bold px-6 py-4 border-t border-borderBase mt-4 bg-gray-50 dark:bg-gray-800/30 text-red-700 dark:text-red-500">
+                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between font-bold px-4 sm:px-6 py-4 border-t border-borderBase mt-4 bg-gray-50 dark:bg-gray-800/30 text-red-700 dark:text-red-500 gap-1">
                     <span>{t('reports.total')} {t('reports.liabilities')}</span>
                     <span>{formatCurrency(data.total_liabilities)}</span>
                  </div>
@@ -115,14 +115,14 @@ export const BalanceSheet = () => {
               <div className="w-full text-left text-sm py-4">
                  {data.equity.length === 0 && <span className="px-6 text-gray-400">-</span>}
                  {data.equity.map(acc => (
-                   <div key={acc.account_code} className="flex justify-between px-6 py-2">
+                   <div key={acc.account_code} className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-2 gap-1">
                      <span className={acc.account_code === 'RETAINED' ? 'italic' : ''}>
                        {acc.account_code !== 'RETAINED' && `[${acc.account_code}]`} {acc.account_name}
                      </span>
                      <span>{formatCurrency(acc.balance)}</span>
                    </div>
                  ))}
-                 <div className="flex justify-between font-bold px-6 py-4 border-t border-borderBase mt-4 bg-gray-50 dark:bg-gray-800/30 text-blue-700 dark:text-blue-500">
+                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between font-bold px-4 sm:px-6 py-4 border-t border-borderBase mt-4 bg-gray-50 dark:bg-gray-800/30 text-blue-700 dark:text-blue-500 gap-1">
                     <span>{t('reports.total')} {t('reports.equity')}</span>
                     <span>{formatCurrency(data.total_equity)}</span>
                  </div>
@@ -134,9 +134,9 @@ export const BalanceSheet = () => {
       
       {/* Verification Check */}
       <Card className="mt-8 relative overflow-hidden">
-        <CardBody className={`flex justify-between items-center text-lg font-bold p-6 ${data.is_balanced ? 'bg-green-50/50 dark:bg-green-900/20 text-green-800 dark:text-green-500' : 'bg-red-50/50 dark:bg-red-900/20 text-red-800 dark:text-red-500'}`}>
+        <CardBody className={`flex flex-col gap-3 sm:gap-0 sm:flex-row sm:justify-between sm:items-center text-base sm:text-lg font-bold p-4 sm:p-6 ${data.is_balanced ? 'bg-green-50/50 dark:bg-green-900/20 text-green-800 dark:text-green-500' : 'bg-red-50/50 dark:bg-red-900/20 text-red-800 dark:text-red-500'}`}>
           <span>Balance Check ({t('reports.assets')} = Liab + Equity)</span>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
              <span>{formatCurrency(data.total_assets)}</span>
              <span>=</span>
              <span>{formatCurrency(data.total_liabilities_and_equity)}</span>

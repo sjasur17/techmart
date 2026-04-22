@@ -12,9 +12,10 @@ interface DropdownProps {
   value: string;
   onChange: (code: string) => void;
   icon: React.ElementType;
+  compact?: boolean;
 }
 
-export function Dropdown({ options, value, onChange, icon: Icon }: DropdownProps) {
+export function Dropdown({ options, value, onChange, icon: Icon, compact = false }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const selected = options.find((o) => o.code === value) || options[0];
@@ -32,16 +33,24 @@ export function Dropdown({ options, value, onChange, icon: Icon }: DropdownProps
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl border text-sm transition-all hover:border-primary/50 focus:outline-none"
+        aria-label={selected.label}
+        title={selected.label}
+        className={`flex items-center border text-sm transition-all hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15 ios-smooth ${compact ? 'w-10 h-10 justify-center rounded-full shadow-sm' : 'gap-2 px-3 py-2 rounded-xl'}`}
         style={{
           borderColor: 'var(--color-border)',
-          background: 'var(--color-card-bg)',
+          background: compact ? 'rgba(255,255,255,0.88)' : 'var(--color-card-bg)',
           color: 'var(--color-text-main)',
+          backdropFilter: compact ? 'blur(18px)' : undefined,
+          WebkitBackdropFilter: compact ? 'blur(18px)' : undefined,
         }}
       >
-        <Icon className="w-4 h-4 opacity-50 shrink-0" />
-        <span>{'flag' in selected && selected.flag ? `${selected.flag} ` : ''}{selected.label}</span>
-        <ChevronDown className={`w-3 h-3 opacity-40 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <Icon className={`shrink-0 ${compact ? 'w-4.5 h-4.5' : 'w-4 h-4 opacity-50'}`} />
+        {!compact && (
+          <>
+            <span>{'flag' in selected && selected.flag ? `${selected.flag} ` : ''}{selected.label}</span>
+            <ChevronDown className={`w-3 h-3 opacity-40 transition-transform ${open ? 'rotate-180' : ''}`} />
+          </>
+        )}
       </button>
 
       {open && (

@@ -103,7 +103,7 @@ export const CreateJournalEntry = () => {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-8">
         <button 
           onClick={() => navigate('/journal')}
           className="p-2 bg-card border border-borderBase rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
@@ -119,7 +119,7 @@ export const CreateJournalEntry = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader title={t('journal_form.title')} />
-          <CardBody className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <CardBody className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             <div>
               <label className="block text-sm font-medium mb-1">{t('journal_form.date')}</label>
               <input 
@@ -166,17 +166,17 @@ export const CreateJournalEntry = () => {
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 border-b border-borderBase dark:bg-gray-800/30 text-xs uppercase font-semibold text-textMain/60">
                   <tr>
-                    <th className="px-6 py-3 w-1/3">{t('journal_form.account')}</th>
-                    <th className="px-6 py-3 w-1/4">{t('journal_form.memo')}</th>
-                    <th className="px-6 py-3 w-1/6 text-right">{t('journal_form.debit')}</th>
-                    <th className="px-6 py-3 w-1/6 text-right">{t('journal_form.credit')}</th>
+                    <th className="px-4 sm:px-6 py-3 w-1/3">{t('journal_form.account')}</th>
+                    <th className="px-4 sm:px-6 py-3 w-1/4">{t('journal_form.memo')}</th>
+                    <th className="px-4 sm:px-6 py-3 w-1/6 text-right">{t('journal_form.debit')}</th>
+                    <th className="px-4 sm:px-6 py-3 w-1/6 text-right">{t('journal_form.credit')}</th>
                     <th className="px-4 py-3 w-12"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                   {fields.map((field, index) => (
                     <tr key={field.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                      <td className="px-6 py-3">
+                      <td className="px-4 sm:px-6 py-3">
                         <select 
                           {...register(`lines.${index}.account` as const)}
                           className="w-full px-2 py-1.5 border border-borderBase bg-transparent rounded-md focus:ring-primary focus:border-primary text-sm"
@@ -190,7 +190,7 @@ export const CreateJournalEntry = () => {
                         </select>
                         {errors.lines?.[index]?.account && <p className="text-[10px] text-red-500 mt-1">{errors.lines[index]?.account?.message}</p>}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-4 sm:px-6 py-3">
                         <input 
                           type="text" 
                           {...register(`lines.${index}.memo` as const)}
@@ -198,7 +198,7 @@ export const CreateJournalEntry = () => {
                           className="w-full px-2 py-1.5 border border-borderBase bg-transparent rounded-md focus:ring-primary focus:border-primary text-sm"
                         />
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-4 sm:px-6 py-3">
                         <input 
                           type="number"
                           step="0.01"
@@ -208,7 +208,7 @@ export const CreateJournalEntry = () => {
                         />
                          {errors.lines?.[index]?.debit && <p className="text-[10px] text-red-500 mt-1">{errors.lines[index]?.debit?.message}</p>}
                       </td>
-                      <td className="px-6 py-3">
+                      <td className="px-4 sm:px-6 py-3">
                         <input 
                           type="number"
                           step="0.01"
@@ -233,13 +233,13 @@ export const CreateJournalEntry = () => {
                 </tbody>
                 <tfoot className="bg-gray-50 border-t border-borderBase dark:bg-gray-800/30">
                   <tr>
-                    <td colSpan={2} className="px-6 py-4 text-right font-medium text-textMain/60">
+                    <td colSpan={2} className="px-4 sm:px-6 py-4 text-right font-medium text-textMain/60">
                       {t('reports.total')}
                     </td>
-                    <td className={`px-6 py-4 text-right font-bold ${isBalanced ? 'text-green-600' : 'text-textMain'}`}>
+                    <td className={`px-4 sm:px-6 py-4 text-right font-bold ${isBalanced ? 'text-green-600' : 'text-textMain'}`}>
                       {formatCurrency(totalDebit)}
                     </td>
-                    <td className={`px-6 py-4 text-right font-bold ${isBalanced ? 'text-green-600' : 'text-textMain'}`}>
+                    <td className={`px-4 sm:px-6 py-4 text-right font-bold ${isBalanced ? 'text-green-600' : 'text-textMain'}`}>
                       {formatCurrency(totalCredit)}
                     </td>
                     <td></td>
@@ -250,7 +250,7 @@ export const CreateJournalEntry = () => {
             
             {/* Balance warning visible to user even before backend validates */}
             {!isBalanced && totalDebit > 0 && totalCredit > 0 && (
-              <div className="bg-red-50/50 dark:bg-red-900/20 text-red-700 dark:text-red-500 px-6 py-3 text-sm font-medium border-t border-borderBase flex items-center justify-center">
+              <div className="bg-red-50/50 dark:bg-red-900/20 text-red-700 dark:text-red-500 px-4 sm:px-6 py-3 text-sm font-medium border-t border-borderBase flex items-center justify-center text-center">
                 {t('journal_form.difference')}: {formatCurrency(Math.abs(totalDebit - totalCredit))}
               </div>
             )}
@@ -263,18 +263,18 @@ export const CreateJournalEntry = () => {
           </CardBody>
         </Card>
 
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4">
           <button
             type="button"
             onClick={() => navigate('/journal')}
-            className="px-6 py-2.5 border border-borderBase rounded-lg text-sm font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="px-6 py-2.5 border border-borderBase rounded-lg text-sm font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors w-full sm:w-auto"
           >
             {t('journal_form.cancel')}
           </button>
           <button
             type="submit"
             disabled={createMutation.isPending}
-            className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors disabled:opacity-50 w-full sm:w-auto"
           >
             {createMutation.isPending ? t('reports.loading') : t('journal_form.save_draft')}
           </button>

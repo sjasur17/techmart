@@ -1,12 +1,12 @@
 # TechMart Savdo - Financial Accounting REST API
 
-Production-ready backend for the Financial Accounting system of TechMart Savdo, a retail company based in Tashkent, Uzbekistan. Built with Django and Django REST Framework, and configured for deployment to Google Cloud Run.
+Production-ready backend for the Financial Accounting system of TechMart Savdo, a retail company based in Tashkent, Uzbekistan. Built with Django and Django REST Framework, and configured for deployment to Render.
 
 ## Architecture and Stack
 - **Framework:** Python 3.11, Django 4.2 LTS, Django REST Framework 3.15
 - **Database:** PostgreSQL (with `psycopg2-binary`)
 - **Authentication:** JWT (JSON Web Tokens) via `djangorestframework-simplejwt`
-- **Deployment:** Dockerized for Google Cloud Run, Gunicorn WSGI server, WhiteNoise for static files.
+- **Deployment:** Dockerized for Render, Gunicorn WSGI server, WhiteNoise for static files.
 
 ## Prerequisites
 - Docker & Docker Compose
@@ -72,6 +72,8 @@ python manage.py test
 | `DATABASE_URL` | PostgreSQL connection string |
 | `ALLOWED_HOSTS` | Comma-separated list of allowed hostnames |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins |
+| `MEDIA_ROOT` | Filesystem path for uploaded media such as user avatars |
+| `MEDIA_URL` | Base URL for uploaded media files |
 | `DJANGO_SETTINGS_MODULE` | Active settings module e.g. `techmart_accounting.settings.local` |
 | `POSTGRES_DB` | Postgres DB Name (for docker-compose) |
 | `POSTGRES_USER` | Postgres User (for docker-compose) |

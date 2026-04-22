@@ -53,21 +53,21 @@ export const IncomeStatement = () => {
           <p className="text-textMain/60 text-sm mt-1">{t('reports.date_range')} (Profit & Loss)</p>
         </div>
         
-        <div className="flex flex-wrap items-center justify-end gap-2 no-print">
-          <div className="flex items-center gap-3 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-soft">
+        <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2 no-print w-full lg:w-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-soft w-full lg:w-auto">
             <Filter className="w-4 h-4 text-gray-400 ml-2" />
             <input 
               type="date" 
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="px-2 py-1 border border-borderBase bg-transparent rounded text-sm focus:outline-none focus:border-primary"
+              className="px-2 py-1 border border-borderBase bg-transparent rounded text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
             />
-            <span className="text-gray-400">-</span>
+            <span className="text-gray-400 hidden sm:inline">-</span>
             <input 
               type="date" 
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="px-2 py-1 border border-borderBase bg-transparent rounded text-sm focus:outline-none focus:border-primary"
+              className="px-2 py-1 border border-borderBase bg-transparent rounded text-sm focus:outline-none focus:border-primary w-full sm:w-auto"
             />
           </div>
 
@@ -75,7 +75,7 @@ export const IncomeStatement = () => {
 
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-borderBase text-textMain px-4 py-2 rounded-lg font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="flex items-center justify-center gap-2 bg-white dark:bg-gray-800 border border-borderBase text-textMain px-4 py-2 rounded-lg font-medium hover:bg-black/5 dark:hover:bg-white/5 transition-colors w-full sm:w-auto"
           >
             <Download className="w-4 h-4" /> {t('reports.export_csv')}
           </button>
@@ -91,21 +91,21 @@ export const IncomeStatement = () => {
           <Card>
             <CardHeader title={`${t('reports.from_to')}: ${formatDate(data.date_from)} - ${formatDate(data.date_to)}`} />
             <CardBody className="p-0">
-              <div className="px-8 py-6 space-y-6">
+              <div className="px-4 sm:px-8 py-6 space-y-6">
                 
                 {/* Revenues */}
                 <div>
                   <h3 className="uppercase text-xs font-bold text-textMain/50 mb-3 tracking-wider">{t('reports.revenues')}</h3>
                   <div className="space-y-2 border-b border-borderBase pb-4">
                     {data.revenues.map(rev => (
-                      <div key={rev.account_code} className="flex justify-between text-sm">
+                      <div key={rev.account_code} className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1">
                         <span>{rev.account_name}</span>
                         <span>{formatCurrency(rev.amount)}</span>
                       </div>
                     ))}
                     {data.revenues.length === 0 && <span className="text-sm text-gray-400">-</span>}
                   </div>
-                  <div className="flex justify-between text-sm font-semibold pt-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm font-semibold pt-4 gap-1">
                     <span>{t('reports.total')} {t('reports.revenues')}</span>
                     <span className="text-green-600">{formatCurrency(data.total_revenue)}</span>
                   </div>
@@ -116,14 +116,14 @@ export const IncomeStatement = () => {
                   <h3 className="uppercase text-xs font-bold text-textMain/50 mb-3 tracking-wider">{t('reports.expenses')}</h3>
                   <div className="space-y-2 border-b border-borderBase pb-4">
                     {data.expenses.map(exp => (
-                      <div key={exp.account_code} className="flex justify-between text-sm">
+                      <div key={exp.account_code} className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1">
                         <span>{exp.account_name}</span>
                         <span>{formatCurrency(exp.amount)}</span>
                       </div>
                     ))}
                      {data.expenses.length === 0 && <span className="text-sm text-gray-400">-</span>}
                   </div>
-                  <div className="flex justify-between text-sm font-semibold pt-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm font-semibold pt-4 gap-1">
                     <span>{t('reports.total')} {t('reports.expenses')}</span>
                     <span className="text-red-500">{formatCurrency(data.total_expenses)}</span>
                   </div>
@@ -132,7 +132,7 @@ export const IncomeStatement = () => {
               </div>
 
               {/* Net Income */}
-              <div className="bg-gray-50/80 dark:bg-gray-800/80 border-t-2 border-borderBase px-8 py-6 flex justify-between items-center rounded-b-xl">
+              <div className="bg-gray-50/80 dark:bg-gray-800/80 border-t-2 border-borderBase px-4 sm:px-8 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-b-xl gap-2">
                 <span className="text-lg font-bold uppercase tracking-wide">{t('reports.net_income')}</span>
                 <span className={`text-2xl font-bold ${parseFloat(data.net_income) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {formatCurrency(data.net_income)}

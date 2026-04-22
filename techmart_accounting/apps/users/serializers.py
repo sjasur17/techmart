@@ -14,13 +14,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
     """Read-only serializer for the current user's profile."""
 
     full_name = serializers.SerializerMethodField()
+    avatar_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             'id', 'username', 'email', 'full_name',
             'first_name', 'last_name', 'department',
-            'phone', 'is_accountant', 'is_staff',
+            'phone', 'avatar_url', 'is_accountant', 'is_staff',
             'date_joined', 'last_login',
         ]
         read_only_fields = fields
@@ -28,13 +29,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_full_name(self, obj: User) -> str:
         return obj.get_full_name()
 
+    def get_avatar_url(self, obj: User):
+        request = self.context.get('request')
+        if not obj.avatar:
+            return None
+
+        avatar_url = obj.avatar.url
+        if request is not None:
+            return request.build_absolute_uri(avatar_url)
+        return avatar_url
+
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating the current user's own profile (non-sensitive fields)."""
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'department', 'phone']
+        fields = ['first_name', 'last_name', 'department', 'phone', 'avatar']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -73,5 +84,5 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs: dict) -> dict:
         data = super().validate(attrs)
-        data['user'] = UserProfileSerializer(self.user).data
+        data['user'] = UserProfileSerializer(self.user, context=self.context).data
         return data

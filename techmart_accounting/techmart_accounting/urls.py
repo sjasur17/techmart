@@ -7,6 +7,8 @@ All API routes are namespaced under /api/v1/.
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
+from django.conf import settings
+from django.conf.urls.static import static
 from apps.reports.views import DashboardView
 
 
@@ -60,3 +62,6 @@ urlpatterns = [
 admin.site.site_header = 'TechMart Savdo — Financial Admin'
 admin.site.site_title = 'TechMart Accounting'
 admin.site.index_title = 'Financial Administration'
+
+if settings.MEDIA_URL and settings.MEDIA_ROOT:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

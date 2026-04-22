@@ -99,7 +99,7 @@ class CurrentUserView(APIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(UserProfileSerializer(request.user).data)
+        return Response(UserProfileSerializer(request.user, context={'request': request}).data)
 
 
 class RegisterView(generics.CreateAPIView):
