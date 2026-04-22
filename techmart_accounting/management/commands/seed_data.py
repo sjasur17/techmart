@@ -22,25 +22,25 @@ ADMIN_USERNAME = 'admin_techmart'
 ADMIN_PASSWORD = 'Admin123!Tech'
 
 OPENING_ACCOUNTS = [
-    {'code': '1010', 'name': 'Cash and Bank', 'account_type': 'A', 'balance': Decimal('180000000.00')},
-    {'code': '1200', 'name': 'Accounts Receivable', 'account_type': 'A', 'balance': Decimal('25000000.00')},
-    {'code': '1300', 'name': 'Inventory', 'account_type': 'A', 'balance': Decimal('42000000.00')},
-    {'code': '1500', 'name': 'Equipment', 'account_type': 'A', 'balance': Decimal('120000000.00')},
-    {'code': '2100', 'name': 'Accounts Payable', 'account_type': 'L', 'balance': Decimal('18000000.00')},
-    {'code': '2200', 'name': 'VAT Payable', 'account_type': 'L', 'balance': Decimal('6000000.00')},
-    {'code': '2300', 'name': 'Payroll Payable', 'account_type': 'L', 'balance': Decimal('4000000.00')},
-    {'code': '2400', 'name': 'Taxes Payable', 'account_type': 'L', 'balance': Decimal('3000000.00')},
-    {'code': '2500', 'name': 'Bank Loan', 'account_type': 'L', 'balance': Decimal('60000000.00')},
-    {'code': '3000', 'name': 'Owner\'s Equity', 'account_type': 'E', 'balance': Decimal('276000000.00')},
-    {'code': '4100', 'name': 'Sales Revenue', 'account_type': 'R', 'balance': Decimal('0.00')},
-    {'code': '4200', 'name': 'Service Revenue', 'account_type': 'R', 'balance': Decimal('0.00')},
-    {'code': '5100', 'name': 'Cost of Goods Sold', 'account_type': 'X', 'balance': Decimal('0.00')},
-    {'code': '5200', 'name': 'Salaries Expense', 'account_type': 'X', 'balance': Decimal('0.00')},
-    {'code': '5300', 'name': 'Rent Expense', 'account_type': 'X', 'balance': Decimal('0.00')},
-    {'code': '5400', 'name': 'Utilities Expense', 'account_type': 'X', 'balance': Decimal('0.00')},
-    {'code': '5500', 'name': 'Marketing Expense', 'account_type': 'X', 'balance': Decimal('0.00')},
-    {'code': '5600', 'name': 'Bank Fees', 'account_type': 'X', 'balance': Decimal('0.00')},
-    {'code': '5700', 'name': 'Tax Expense', 'account_type': 'X', 'balance': Decimal('0.00')},
+    {'code': '1010', 'name': 'Cash and Bank', 'account_type': 'A', 'currency': 'UZS', 'balance': Decimal('180000000.00')},
+    {'code': '1200', 'name': 'Accounts Receivable', 'account_type': 'A', 'currency': 'UZS', 'balance': Decimal('25000000.00')},
+    {'code': '1300', 'name': 'Inventory', 'account_type': 'A', 'currency': 'UZS', 'balance': Decimal('42000000.00')},
+    {'code': '1500', 'name': 'Equipment', 'account_type': 'A', 'currency': 'UZS', 'balance': Decimal('120000000.00')},
+    {'code': '2100', 'name': 'Accounts Payable', 'account_type': 'L', 'currency': 'UZS', 'balance': Decimal('18000000.00')},
+    {'code': '2200', 'name': 'VAT Payable', 'account_type': 'L', 'currency': 'UZS', 'balance': Decimal('6000000.00')},
+    {'code': '2300', 'name': 'Payroll Payable', 'account_type': 'L', 'currency': 'UZS', 'balance': Decimal('4000000.00')},
+    {'code': '2400', 'name': 'Taxes Payable', 'account_type': 'L', 'currency': 'UZS', 'balance': Decimal('3000000.00')},
+    {'code': '2500', 'name': 'Bank Loan', 'account_type': 'L', 'currency': 'UZS', 'balance': Decimal('60000000.00')},
+    {'code': '3000', 'name': 'Owner\'s Equity', 'account_type': 'E', 'currency': 'UZS', 'balance': Decimal('276000000.00')},
+    {'code': '4100', 'name': 'Sales Revenue', 'account_type': 'R', 'currency': 'UZS', 'balance': Decimal('0.00')},
+    {'code': '4200', 'name': 'Service Revenue', 'account_type': 'R', 'currency': 'UZS', 'balance': Decimal('0.00')},
+    {'code': '5100', 'name': 'Cost of Goods Sold', 'account_type': 'X', 'currency': 'UZS', 'balance': Decimal('0.00')},
+    {'code': '5200', 'name': 'Salaries Expense', 'account_type': 'X', 'currency': 'UZS', 'balance': Decimal('0.00')},
+    {'code': '5300', 'name': 'Rent Expense', 'account_type': 'X', 'currency': 'UZS', 'balance': Decimal('0.00')},
+    {'code': '5400', 'name': 'Utilities Expense', 'account_type': 'X', 'currency': 'UZS', 'balance': Decimal('0.00')},
+    {'code': '5500', 'name': 'Marketing Expense', 'account_type': 'X', 'currency': 'UZS', 'balance': Decimal('0.00')},
+    {'code': '5600', 'name': 'Bank Fees', 'account_type': 'X', 'currency': 'UZS', 'balance': Decimal('0.00')},
+    {'code': '5700', 'name': 'Tax Expense', 'account_type': 'X', 'currency': 'UZS', 'balance': Decimal('0.00')},
 ]
 
 DEMO_JOURNAL_ENTRIES = [
@@ -48,6 +48,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2025-11-05',
         'reference': 'TM-INV-251105',
         'description': 'Cash sale for retail hardware and accessories',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('1010', '62000000.00', '0.00', 'Cash collection from point-of-sale sales'),
@@ -58,6 +59,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2025-11-12',
         'reference': 'TM-BILL-251112',
         'description': 'Inventory purchased on supplier credit',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('1300', '35000000.00', '0.00', 'New inventory stock for Q4 demand'),
@@ -68,6 +70,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2025-11-20',
         'reference': 'TM-PMT-251120',
         'description': 'Partial payment to inventory supplier',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('2100', '12000000.00', '0.00', 'Supplier settlement for prior invoice'),
@@ -78,6 +81,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2025-12-03',
         'reference': 'TM-INV-251203',
         'description': 'Wholesale sale to channel partner on credit',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('1200', '48000000.00', '0.00', 'Invoice issued to channel partner'),
@@ -88,6 +92,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2025-12-11',
         'reference': 'TM-COGS-251211',
         'description': 'Cost of goods sold recognized for shipped inventory',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('5100', '28000000.00', '0.00', 'COGS recognized on fulfilled order'),
@@ -98,6 +103,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2025-12-18',
         'reference': 'TM-PAY-251218',
         'description': 'Monthly salaries paid to operations team',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('5200', '14000000.00', '0.00', 'December payroll expense'),
@@ -108,6 +114,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-01-06',
         'reference': 'TM-AR-260106',
         'description': 'Customer receipt collected from outstanding receivables',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('1010', '20000000.00', '0.00', 'Customer settlement via bank transfer'),
@@ -118,6 +125,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-01-10',
         'reference': 'TM-EXP-260110',
         'description': 'Office rent and utilities for headquarters',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('5300', '9000000.00', '0.00', 'Office rent for January'),
@@ -129,6 +137,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-02-04',
         'reference': 'TM-LOAN-260204',
         'description': 'Working capital loan received from bank',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('1010', '40000000.00', '0.00', 'Loan proceeds credited to bank'),
@@ -139,6 +148,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-02-14',
         'reference': 'TM-CAPEX-260214',
         'description': 'Warehouse equipment purchase and installation',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('1500', '30000000.00', '0.00', 'New warehouse equipment'),
@@ -149,6 +159,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-02-23',
         'reference': 'TM-MKT-260223',
         'description': 'Digital marketing campaign for spring demand',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('5500', '8000000.00', '0.00', 'Ads and campaign production'),
@@ -159,6 +170,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-03-02',
         'reference': 'TM-TAX-260302',
         'description': 'VAT and tax accrual for February operations',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('5700', '5000000.00', '0.00', 'Accrued corporate tax expense'),
@@ -169,6 +181,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-03-15',
         'reference': 'TM-SVC-260315',
         'description': 'Service revenue for installation and support contract',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('1010', '26000000.00', '0.00', 'Cash received for service contract'),
@@ -179,6 +192,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-03-22',
         'reference': 'TM-PR-260322',
         'description': 'Payroll accrued for warehouse and finance staff',
+        'currency': 'UZS',
         'posted': False,
         'lines': [
             ('5200', '11000000.00', '0.00', 'Accrued March payroll'),
@@ -189,6 +203,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-04-02',
         'reference': 'TM-INV-260402',
         'description': 'Credit sale to reseller network for spring restock',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('1200', '55000000.00', '0.00', 'Invoice issued to reseller'),
@@ -199,6 +214,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-04-10',
         'reference': 'TM-LOAN-260410',
         'description': 'Partial principal repayment on bank loan',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('2500', '10000000.00', '0.00', 'Loan principal repayment'),
@@ -209,6 +225,7 @@ DEMO_JOURNAL_ENTRIES = [
         'date': '2026-04-18',
         'reference': 'TM-FEE-260418',
         'description': 'Monthly bank service fees',
+        'currency': 'UZS',
         'posted': True,
         'lines': [
             ('5600', '1200000.00', '0.00', 'Bank processing and service fees'),
@@ -294,6 +311,7 @@ class Command(BaseCommand):
                     defaults={
                         'name': account_data['name'],
                         'account_type': account_data['account_type'],
+                        'currency': account_data['currency'],
                         'balance': account_data['balance'],
                         'is_active': True,
                     },
@@ -316,6 +334,7 @@ class Command(BaseCommand):
                     defaults={
                         'date': entry_data['date'],
                         'description': entry_data['description'],
+                        'currency': entry_data['currency'],
                         'created_by': user,
                         'is_posted': False,
                     },

@@ -83,11 +83,15 @@ class JournalEntrySerializer(serializers.ModelSerializer):
     is_balanced = serializers.SerializerMethodField(read_only=True)
     total_debit = serializers.SerializerMethodField(read_only=True)
     total_credit = serializers.SerializerMethodField(read_only=True)
+    currency_display = serializers.CharField(
+        source='get_currency_display', read_only=True
+    )
 
     class Meta:
         model = JournalEntry
         fields = [
             'id', 'date', 'description', 'reference',
+            'currency', 'currency_display',
             'created_by', 'created_by_name',
             'is_posted', 'posted_at',
             'is_balanced', 'total_debit', 'total_credit',

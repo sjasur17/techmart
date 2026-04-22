@@ -25,6 +25,7 @@ const journalSchema = z.object({
   date: z.string().min(1, 'Date is required'),
   description: z.string().min(1, 'Description is required'),
   reference: z.string().optional(),
+  currency: z.string().default('UZS'),
   lines: z.array(entryLineSchema).min(2, 'At least 2 lines are required'),
 });
 
@@ -45,6 +46,7 @@ export const CreateJournalEntry = () => {
       date: new Date().toISOString().split('T')[0],
       reference: '',
       description: '',
+      currency: 'UZS',
       lines: [
         { account: 0, debit: 0, credit: 0, memo: '' },
         { account: 0, debit: 0, credit: 0, memo: '' },
@@ -59,6 +61,7 @@ export const CreateJournalEntry = () => {
 
   // useWatch is reactive on each keystroke (unlike watch which only re-renders on form state changes)
   const watchLines = useWatch({ control, name: 'lines' });
+  const watchCurrency = useWatch({ control, name: 'currency' });
   
   const { totalDebit, totalCredit } = useMemo(() => {
     return (watchLines || []).reduce((acc: any, line: any) => {
@@ -128,6 +131,17 @@ export const CreateJournalEntry = () => {
                 className="w-full px-3 py-2 border border-borderBase bg-transparent rounded-lg shadow-sm focus:ring-primary focus:border-primary text-sm"
               />
               {errors.date && <p className="text-xs text-red-500 mt-1">{errors.date.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">{t('common.currency')}</label>
+              <select 
+                {...register('currency')}
+                className="w-full px-3 py-2 border border-borderBase bg-transparent rounded-lg shadow-sm focus:ring-primary focus:border-primary text-sm"
+              >
+                <option value="UZS">UZS - {t('currency.uzs')}</option>
+                <option value="RUB">RUB - {t('currency.rub')}</option>
+                <option value="USD">USD - {t('currency.usd')}</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">{t('journal_form.reference')}</label>
@@ -237,10 +251,10 @@ export const CreateJournalEntry = () => {
                       {t('reports.total')}
                     </td>
                     <td className={`px-4 sm:px-6 py-4 text-right font-bold ${isBalanced ? 'text-green-600' : 'text-textMain'}`}>
-                      {formatCurrency(totalDebit)}
+                      {formatCurrency(totalDebit, watchCurrency)}
                     </td>
                     <td className={`px-4 sm:px-6 py-4 text-right font-bold ${isBalanced ? 'text-green-600' : 'text-textMain'}`}>
-                      {formatCurrency(totalCredit)}
+                      {formatCurrency(totalCredit, watchCurrency)}
                     </td>
                     <td></td>
                   </tr>
@@ -251,7 +265,7 @@ export const CreateJournalEntry = () => {
             {/* Balance warning visible to user even before backend validates */}
             {!isBalanced && totalDebit > 0 && totalCredit > 0 && (
               <div className="bg-red-50/50 dark:bg-red-900/20 text-red-700 dark:text-red-500 px-4 sm:px-6 py-3 text-sm font-medium border-t border-borderBase flex items-center justify-center text-center">
-                {t('journal_form.difference')}: {formatCurrency(Math.abs(totalDebit - totalCredit))}
+                {t('journal_form.difference')}: {formatCurrency(Math.abs(totalDebit - totalCredit), watchCurrency)}
               </div>
             )}
             

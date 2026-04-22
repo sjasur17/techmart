@@ -14,12 +14,15 @@ class AccountSerializer(serializers.ModelSerializer):
     account_type_display = serializers.CharField(
         source='get_account_type_display', read_only=True
     )
+    currency_display = serializers.CharField(
+        source='get_currency_display', read_only=True
+    )
 
     class Meta:
         model = Account
         fields = [
             'id', 'code', 'name', 'account_type', 'account_type_display',
-            'balance', 'is_active', 'created_at', 'updated_at',
+            'currency', 'currency_display', 'balance', 'is_active', 'created_at', 'updated_at',
         ]
         read_only_fields = ['balance', 'created_at', 'updated_at']
 
@@ -39,6 +42,10 @@ class AccountSummarySerializer(serializers.ModelSerializer):
     Lightweight serializer used inside EntryLine responses to avoid deep nesting.
     """
 
+    currency_display = serializers.CharField(
+        source='get_currency_display', read_only=True
+    )
+
     class Meta:
         model = Account
-        fields = ['id', 'code', 'name', 'account_type']
+        fields = ['id', 'code', 'name', 'account_type', 'currency', 'currency_display']

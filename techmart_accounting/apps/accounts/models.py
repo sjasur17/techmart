@@ -26,6 +26,12 @@ class Account(models.Model):
         ('X', 'Expense'),
     ]
 
+    CURRENCIES = [
+        ('UZS', 'Uzbek Som'),
+        ('RUB', 'Russian Ruble'),
+        ('USD', 'US Dollar'),
+    ]
+
     # A/L/E accounts increase with credit; R increases with credit;
     # X (Expense) increases with debit.
     DEBIT_NORMAL = ('A', 'X')   # Debit increases balance
@@ -45,11 +51,17 @@ class Account(models.Model):
         choices=TYPES,
         help_text='A=Asset, L=Liability, E=Equity, R=Revenue, X=Expense.',
     )
+    currency = models.CharField(
+        max_length=3,
+        choices=CURRENCIES,
+        default='UZS',
+        help_text='Currency for this account (UZS, RUB, USD).',
+    )
     balance = models.DecimalField(
         max_digits=14,
         decimal_places=2,
         default=0,
-        help_text='Running balance in UZS. Updated atomically on journal entry posting.',
+        help_text='Running balance. Updated atomically on journal entry posting.',
     )
     is_active = models.BooleanField(
         default=True,

@@ -133,11 +133,16 @@ export const Accounts = () => {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState('');
   const [showModal, setShowModal] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['accounts', page, searchTerm],
-    queryFn: () => accountsService.getAccounts({ page, search: searchTerm }),
+    queryKey: ['accounts', page, searchTerm, selectedCurrency],
+    queryFn: () => accountsService.getAccounts({ 
+      page, 
+      search: searchTerm,
+      currency: selectedCurrency || undefined
+    }),
   });
 
   const getBadgeVariant = (type: string) => {
@@ -171,15 +176,27 @@ export const Accounts = () => {
 
       <Card>
         <CardHeader>
-          <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-muted)' }} />
-            <input
-              type="text"
-              placeholder={t('accounts.search')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="input-base pl-9 w-full"
-            />
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <div className="relative flex-1 sm:w-72">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-muted)' }} />
+              <input
+                type="text"
+                placeholder={t('accounts.search')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input-base pl-9 w-full"
+              />
+            </div>
+            <select
+              value={selectedCurrency}
+              onChange={(e) => setSelectedCurrency(e.target.value)}
+              className="input-base px-3 py-2 w-full sm:w-40"
+            >
+              <option value="">{t('common.all_currencies', 'All Currencies')}</option>
+              <option value="UZS">UZS - Uzbek Som</option>
+              <option value="RUB">RUB - Russian Ruble</option>
+              <option value="USD">USD - US Dollar</option>
+            </select>
           </div>
         </CardHeader>
         <CardBody className="p-0">
@@ -197,9 +214,11 @@ export const Accounts = () => {
               <table className="table-premium">
                 <thead>
                   <tr>
+                  <tr>
                     <th>{t('accounts.code')}</th>
                     <th>{t('accounts.name')}</th>
                     <th>{t('accounts.type')}</th>
+                    <th>{t('common.currency')}</th>
                     <th className="text-right">{t('accounts.balance')}</th>
                     <th>{t('common.status')}</th>
                     <th className="text-right">{t('accounts.updated')}</th>
@@ -216,7 +235,8 @@ export const Accounts = () => {
                           {acc.account_type_display}
                         </Badge>
                       </td>
-                      <td className="text-right font-semibold">{formatCurrency(acc.balance)}</td>
+                      <td className="font-mono text-sm font-semibold">{acc.currency}</td>
+                      <td className="text-right font-semibold">{formatCurrency(acc.balance, acc.currency)}</td>
                       <td>
                         <Badge variant={acc.is_active ? 'success' : 'error'}>
                           {acc.is_active ? t('accounts.active') : t('accounts.inactive')}

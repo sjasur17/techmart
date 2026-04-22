@@ -1,10 +1,12 @@
 import { format, parseISO } from 'date-fns';
 
-export const formatCurrency = (amount: string | number) => {
+export const formatCurrency = (amount: string | number, currency: string = 'UZS') => {
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
-  return new Intl.NumberFormat('uz-UZ', {
+  const locale = currency === 'RUB' ? 'ru-RU' : currency === 'USD' ? 'en-US' : 'uz-UZ';
+  
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'UZS',
+    currency: currency,
     minimumFractionDigits: 2,
   }).format(num);
 };

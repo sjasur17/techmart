@@ -14,6 +14,7 @@ import { useAuthStore } from '../store/useAuthStore';
 export const JournalList = () => {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
+  const [selectedCurrency, setSelectedCurrency] = useState('');
   const [searchParams] = useSearchParams();
   const statusFilter = searchParams.get('status');
   const isPostedFilter = statusFilter === 'draft' ? false : statusFilter === 'posted' ? true : undefined;
@@ -26,11 +27,14 @@ export const JournalList = () => {
   }, [statusFilter]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['journal', page, statusFilter],
+    queryKey: ['journal', page, statusFilter, selectedCurrency],
     queryFn: () => {
       const params: Record<string, any> = { page };
       if (isPostedFilter !== undefined) {
         params.is_posted = isPostedFilter;
+      }
+      if (selectedCurrency) {
+        params.currency = selectedCurrency;
       }
       return journalService.getEntries(params);
     },
@@ -79,6 +83,21 @@ export const JournalList = () => {
       </div>
 
       <Card>
+        <CardHeader>
+          <select
+            value={selectedCurrency}
+            onChange={(e) => {
+              setSelectedCurrency(e.target.value);
+              setPage(1);
+            }}
+            className="input-base px-3 py-2 w-full sm:w-40"
+          >
+            <option value="">{t('common.all_currencies', 'All Currencies')}</option>
+            <option value="UZS">UZS - Uzbek Som</option>
+            <option value="RUB">RUB - Russian Ruble</option>
+            <option value="USD">USD - US Dollar</option>
+          </select>
+        </CardHeader>
         <CardBody className="p-0">
           {isLoading ? (
             <Loading text={t('journals.loading')} />

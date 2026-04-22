@@ -25,6 +25,12 @@ class JournalEntry(models.Model):
     unpost an entry (which reverses all balance changes).
     """
 
+    CURRENCIES = [
+        ('UZS', 'Uzbek Som'),
+        ('RUB', 'Russian Ruble'),
+        ('USD', 'US Dollar'),
+    ]
+
     date = models.DateField(
         help_text='Accounting date of the transaction (may differ from entry date).',
     )
@@ -35,6 +41,12 @@ class JournalEntry(models.Model):
         max_length=50,
         blank=True,
         help_text='External reference number, e.g. invoice or receipt number.',
+    )
+    currency = models.CharField(
+        max_length=3,
+        choices=CURRENCIES,
+        default='UZS',
+        help_text='Currency for this journal entry (UZS, RUB, USD).',
     )
     created_by = models.ForeignKey(
         User,
