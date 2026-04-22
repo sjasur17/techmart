@@ -19,6 +19,9 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
 
+    # Root path for Render/browser checks
+    path('', health_check, name='home'),
+
     # Health check (no auth required for Cloud Run)
     path('health/', health_check, name='health-check'),
 
