@@ -15,6 +15,24 @@ def health_check(request):
     return JsonResponse({'status': 'ok', 'service': 'techmart-accounting-api'})
 
 
+def api_root(request):
+    """Simple API discovery endpoint."""
+    return JsonResponse(
+        {
+            'status': 'ok',
+            'api': 'v1',
+            'endpoints': {
+                'auth': '/api/v1/auth/',
+                'accounts': '/api/v1/accounts/',
+                'journal': '/api/v1/journal/',
+                'reports': '/api/v1/reports/',
+                'notifications': '/api/v1/notifications/',
+                'dashboard': '/api/v1/dashboard/',
+            },
+        }
+    )
+
+
 urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
@@ -26,6 +44,7 @@ urlpatterns = [
     path('health/', health_check, name='health-check'),
 
     # API v1
+    path('api/v1/', api_root, name='api-root'),
     path('api/v1/auth/', include('apps.users.urls', namespace='auth')),
     path('api/v1/accounts/', include('apps.accounts.urls', namespace='accounts')),
     path('api/v1/journal/', include('apps.journal.urls', namespace='journal')),

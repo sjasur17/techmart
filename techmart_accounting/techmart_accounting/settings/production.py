@@ -67,7 +67,11 @@ else:
 # CORS — only allow listed origins in production
 # ---------------------------------------------------------------------------
 
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='', cast=Csv())
+CORS_ALLOWED_ORIGINS = [
+    origin if origin.startswith(('http://', 'https://')) else f'https://{origin}'
+    for origin in config('CORS_ALLOWED_ORIGINS', default='', cast=Csv())
+    if origin
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # ---------------------------------------------------------------------------
