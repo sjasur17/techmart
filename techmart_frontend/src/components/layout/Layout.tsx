@@ -24,6 +24,8 @@ export const Layout = () => {
     queryFn: notificationService.getNotifications,
     refetchInterval: 30000, // Poll every 30s
     enabled: !!accessToken, // Only fetch if user is authenticated
+    staleTime: 30000, // Consider data fresh for 30s
+    retry: 1, // Retry once on failure
   });
 
   const markAllReadMutation = useMutation({

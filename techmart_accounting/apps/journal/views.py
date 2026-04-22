@@ -23,18 +23,19 @@ from .serializers import JournalEntrySerializer, JournalEntryListSerializer
 
 class JournalEntryFilter(drf_filters.FilterSet):
     """
-    Custom FilterSet allowing date range and posted-status filtering.
+    Custom FilterSet allowing date range, posted-status, and currency filtering.
 
-    Supports: ?is_posted=true, ?date_from=YYYY-MM-DD, ?date_to=YYYY-MM-DD
+    Supports: ?is_posted=true, ?date_from=YYYY-MM-DD, ?date_to=YYYY-MM-DD, ?currency=UZS
     """
 
     date_from = drf_filters.DateFilter(field_name='date', lookup_expr='gte')
     date_to = drf_filters.DateFilter(field_name='date', lookup_expr='lte')
     is_posted = drf_filters.BooleanFilter(field_name='is_posted')
+    currency = drf_filters.CharFilter(field_name='currency', lookup_expr='exact')
 
     class Meta:
         model = JournalEntry
-        fields = ['is_posted', 'date_from', 'date_to']
+        fields = ['is_posted', 'date_from', 'date_to', 'currency']
 
 
 class JournalEntryViewSet(viewsets.ModelViewSet):

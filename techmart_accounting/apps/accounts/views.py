@@ -32,7 +32,7 @@ class AccountViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all().order_by('code')
     serializer_class = AccountSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['account_type', 'is_active']
+    filterset_fields = ['account_type', 'is_active', 'currency']
     search_fields = ['code', 'name']
     ordering_fields = ['code', 'name', 'balance', 'created_at']
     ordering = ['code']
