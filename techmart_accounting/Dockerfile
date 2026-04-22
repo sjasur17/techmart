@@ -31,5 +31,6 @@ RUN python manage.py collectstatic --noinput
 # Expose port (Cloud Run defaults to 8080, but using 8000 as configured here)
 EXPOSE 8000
 
-# Run migrations, seed demo data, ensure admin exists, then start server using gunicorn
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py seed_data && python create_admin.py && gunicorn techmart_accounting.wsgi:application --bind 0.0.0.0:8000 --workers 2 --timeout 120"]
+# Run migrations and ensure admin exists on every boot.
+# Optional seeding can be enabled with RUN_SEED_DATA=1.
+CMD ["sh", "-c", "python manage.py migrate --noinput && python create_admin.py && if [ \"$RUN_SEED_DATA\" = \"1\" ]; then python manage.py seed_data; fi && gunicorn techmart_accounting.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120"]
