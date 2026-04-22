@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import { reportsService } from '../api/services';
+import { useAuthStore } from '../store/useAuthStore';
 import { Send, Sparkles, User, Loader2, Trash2, Clock, History, X, MessageSquare } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
@@ -12,19 +13,54 @@ interface ChatMessage {
   timestamp: number;
 }
 
-const STORAGE_KEY = 'techmart-ai-chat-history';
+const LEGACY_STORAGE_KEY = 'techmart-ai-chat-history';
 
-const loadHistory = (): ChatMessage[] => {
+const makeStorageKey = (userId?: number) =>
+  userId ? `techmart-ai-chat-history:${userId}` : `${LEGACY_STORAGE_KEY}:guest`;
+
+const createMessageId = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+};
+
+const isValidMessage = (item: unknown): item is ChatMessage => {
+  if (!item || typeof item !== 'object') return false;
+  const msg = item as ChatMessage;
+  return (
+    (typeof msg.id === 'string' || typeof msg.id === 'number') &&
+    (msg.role === 'user' || msg.role === 'assistant') &&
+    typeof msg.content === 'string' &&
+    typeof msg.timestamp === 'number'
+  );
+};
+
+const loadHistory = (storageKey: string): ChatMessage[] => {
   try {
-    const s = localStorage.getItem(STORAGE_KEY);
-    if (s) return JSON.parse(s);
+    const scoped = localStorage.getItem(storageKey);
+    if (scoped) {
+      const parsed = JSON.parse(scoped);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(isValidMessage);
+      }
+    }
+
+    // Backward-compatible fallback for older builds.
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy) {
+      const parsedLegacy = JSON.parse(legacy);
+      if (Array.isArray(parsedLegacy)) {
+        return parsedLegacy.filter(isValidMessage);
+      }
+    }
   } catch {}
   return [];
 };
 
-const saveHistory = (msgs: ChatMessage[]) => {
+const saveHistory = (storageKey: string, msgs: ChatMessage[]) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs.slice(-100)));
+    localStorage.setItem(storageKey, JSON.stringify(msgs.slice(-100)));
   } catch {}
 };
 
@@ -64,40 +100,52 @@ const getSessionTitle = (msgs: ChatMessage[]) => {
 
 export const AIAssistant = () => {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const storageKey = React.useMemo(() => makeStorageKey(user?.id), [user?.id]);
+  const hydratedRef = useRef(false);
   const [showHistory, setShowHistory] = useState(false);
 
-  const [messages, setMessages] = useState<ChatMessage[]>(() => {
-    const hist = loadHistory();
-    if (hist.length > 0) return hist;
-    return [{
-      id: 'welcome',
-      role: 'assistant',
-      content: t('ai.welcome').replace('<br/>', '\n'),
-      timestamp: Date.now(),
-    }];
-  });
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const hist = loadHistory(storageKey);
+    if (hist.length > 0) {
+      setMessages(hist);
+    } else {
+      setMessages([
+        {
+          id: createMessageId(),
+          role: 'assistant',
+          content: t('ai.welcome').replace('<br/>', '\n'),
+          timestamp: Date.now(),
+        },
+      ]);
+    }
+    hydratedRef.current = true;
+  }, [storageKey, t]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
-    saveHistory(messages);
-  }, [messages]);
+    if (!hydratedRef.current) return;
+    saveHistory(storageKey, messages);
+  }, [messages, storageKey]);
 
   const chatMutation = useMutation({
     mutationFn: (message: string) => reportsService.askAssistant(message),
     onSuccess: (data) => {
       setMessages(prev => [...prev, {
-        id: Date.now(), role: 'assistant', content: data.reply, timestamp: Date.now(),
+        id: createMessageId(), role: 'assistant', content: data.reply, timestamp: Date.now(),
       }]);
     },
     onError: (error: any) => {
       setMessages(prev => [...prev, {
-        id: Date.now(),
+        id: createMessageId(),
         role: 'assistant',
         content: `Sorry, an error occurred: ${error.response?.data?.error || error.message}`,
         timestamp: Date.now(),
@@ -107,12 +155,12 @@ export const AIAssistant = () => {
 
   const handleClear = () => {
     const welcome: ChatMessage = {
-      id: 'welcome', role: 'assistant',
+      id: createMessageId(), role: 'assistant',
       content: t('ai.welcome').replace('<br/>', '\n'),
       timestamp: Date.now(),
     };
     setMessages([welcome]);
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(storageKey);
   };
 
   const handleSubmit = (e?: React.FormEvent) => {
@@ -120,7 +168,7 @@ export const AIAssistant = () => {
     if (!input.trim() || chatMutation.isPending) return;
     const userMsg = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: userMsg, timestamp: Date.now() }]);
+    setMessages(prev => [...prev, { id: createMessageId(), role: 'user', content: userMsg, timestamp: Date.now() }]);
     chatMutation.mutate(userMsg);
   };
 
