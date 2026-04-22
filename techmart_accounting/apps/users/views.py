@@ -14,6 +14,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.exceptions import TokenError
+from apps.notifications.models import Notification
 
 from .serializers import (
     CustomTokenObtainPairSerializer,
@@ -91,7 +92,7 @@ class CurrentUserView(APIView):
 
     def get(self, request) -> Response:
         """Return the authenticated user's profile."""
-        serializer = UserProfileSerializer(request.user)
+        serializer = UserProfileSerializer(request.user, context={'request': request})
         return Response(serializer.data)
 
     def patch(self, request) -> Response:
@@ -101,6 +102,17 @@ class CurrentUserView(APIView):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        # Best-effort notification so profile events appear in the bell panel.
+        try:
+            Notification.objects.create(
+                user=request.user,
+                title='Profile updated',
+                message='Your profile information was updated successfully.',
+            )
+        except Exception:
+            pass
+
         return Response(UserProfileSerializer(request.user, context={'request': request}).data)
 
 
