@@ -37,16 +37,23 @@ X_FRAME_OPTIONS = 'DENY'
 # ---------------------------------------------------------------------------
 
 database_url = config('DATABASE_URL', default='').strip()
-if database_url in {'', '://'}:
-    database_url = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+valid_db_schemes = ('postgres://', 'postgresql://', 'cockroach://')
 
-DATABASES = {
-    'default': dj_database_url.parse(
-        database_url,
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+if database_url.startswith(valid_db_schemes):
+    DATABASES = {
+        'default': dj_database_url.parse(
+            database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # ---------------------------------------------------------------------------
 # CORS — only allow listed origins in production
